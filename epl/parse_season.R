@@ -54,10 +54,6 @@ BuildLeagueTable <- function(games, start.date = "initial", finish.date = "final
   table <- data.frame(Team = levels(games$Home.Team))
   by.home.team <- split(games, games$Home.Team)
   by.away.team <- split(games, games$Away.Team)
-  by.team <- vector("list", length(table$Team))
-  for(i in seq_along(table$Team)) {
-    by.team[[i]] <- rbind(by.home.team[[i]], by.away.team[[i]])
-  }
   
   table$Home.Games <- sapply(by.home.team, nrow)
   table$Home.Wins <- sapply(by.home.team, function(x) sum(x[, 4] > x[, 5]))
