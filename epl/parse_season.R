@@ -11,10 +11,11 @@ LoadSeason <- function(filename = "EPL 13-14.csv") {
   #     Away.Team: Away team
   #     Home.Score: Goals scored by the home team
   #     Away.Score: Goals scored by the away team
+  
   read.csv(filename)
 }
 
-BuildLeagueTable <- (games, start.date = "initial", finish.date = "final") {
+BuildLeagueTable <- function(games, start.date = "initial", finish.date = "final") {
   # Builds a league table from individual games, including only games in the provided date range
   #
   # Args:
@@ -50,4 +51,12 @@ BuildLeagueTable <- (games, start.date = "initial", finish.date = "final") {
   #     Goal.Difference: Difference in total goals
   #     Points: Number of total points
   
+  teams <- levels(games$Home.Team)
+  games.by.home.team <- split(games, games$Home.Team)
+  games.by.away.team <- split(games, games$Away.Team)
+  games.by.team <- vector("list", length(teams))
+  for(i in seq_along(teams)) {
+    games.by.team[[i]] <- rbind(games.by.home.team[[i]], games.by.away.team[[i]])
+  }
+  games.by.team
 }
