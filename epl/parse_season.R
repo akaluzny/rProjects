@@ -51,12 +51,40 @@ BuildLeagueTable <- function(games, start.date = "initial", finish.date = "final
   #     Goal.Difference: Difference in total goals
   #     Points: Number of total points
   
-  teams <- levels(games$Home.Team)
-  games.by.home.team <- split(games, games$Home.Team)
-  games.by.away.team <- split(games, games$Away.Team)
-  games.by.team <- vector("list", length(teams))
-  for(i in seq_along(teams)) {
-    games.by.team[[i]] <- rbind(games.by.home.team[[i]], games.by.away.team[[i]])
+  table <- data.frame(Team = levels(games$Home.Team))
+  by.home.team <- split(games, games$Home.Team)
+  by.away.team <- split(games, games$Away.Team)
+  by.team <- vector("list", length(table$Team))
+  for(i in seq_along(table$Team)) {
+    by.team[[i]] <- rbind(by.home.team[[i]], by.away.team[[i]])
   }
-  games.by.team
+  
+  table$Home.Games <- sapply(by.home.team, nrow)
+  table$Home.Wins <- sapply(by.home.team, function(x) sum(x[, 4] > x[, 5]))
+  table$Home.Draws <- sapply(by.home.team, function(x) sum(x[, 4] == x[, 5]))
+  table$Home.Losses <- sapply(by.home.team, function(x) sum(x[, 4] < x[, 5]))
+  table$Home.Scored <- sapply(by.home.team, function(x) sum(x[, 4]))
+  table$Home.Allowed <- sapply(by.home.team, function(x) sum(x[, 5]))
+  table$Home.Goal.Difference <- table$Home.Scored - table$Home.Allowed
+  table$Home.Points <- table$Home.Wins * 3 + table$Home.Draws
+  
+  table$Away.Games <- sapply(by.away.team, nrow)
+  table$Away.Wins <- sapply(by.away.team, function(x) sum(x[, 4] < x[, 5]))
+  table$Away.Draws <- sapply(by.away.team, function(x) sum(x[, 4] == x[, 5]))
+  table$Away.Losses <- sapply(by.away.team, function(x) sum(x[, 4] > x[, 5]))
+  table$Away.Scored <- sapply(by.away.team, function(x) sum(x[, 5]))
+  table$Away.Allowed <- sapply(by.away.team, function(x) sum(x[, 4]))
+  table$Away.Goal.Difference <- table$Away.Scored - table$Away.Allowed
+  table$Away.Points <- table$Away.Wins * 3 + table$Away.Draws
+  
+  table$Games <- table$Home.Games + table$Away.Games
+  table$Wins <- table$Home.Wins + table$Away.Wins
+  table$Draws <- table$Home.Draws + table$Away.Draws
+  table$Losses <- table$Home.Losses + table$Away.Losses
+  table$Scored <- table$Home.Scored + table$Away.Scored
+  table$Allowed <- table$Home.Allowed + table$Away.Allowed
+  table$Goal.Difference <- table$Home.Goal.Difference + table$Away.Goal.Difference
+  table$Points <- table$Home.Points + table$Away.Points
+  
+  table
 }
