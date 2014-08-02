@@ -52,6 +52,24 @@ BuildLeagueTable <- function(games, start.date = "initial", finish.date = "final
   #     Allowed: Number of total goals allowed
   #     Goal.Difference: Difference in total goals
   #     Points: Number of total points
+
+  # Assume all games take two hours
+  two.hours <- as.difftime(2, units="hours")
+  if (start.date == "initial") {
+    # Initial time should begin with the first game
+    start.date <- games$Date.Time[1]
+  } else {
+    # Ongoing games should not be included
+    start.date <- start.date - two.hours
+  }
+  if (finish.date == "final") {
+    # Final time should end with the last game
+    finish.date <- games$Date.Time[nrow(games)]
+  } else {
+    #Ongoing games should not be included
+    finish.date <- finish.date - two.hours
+  }
+  games <- games[games$Date.Time >= start.date & games$Date.Time <= finish.date, ]
   
   table <- data.frame(Team = levels(games$Home.Team))
   by.home.team <- split(games, games$Home.Team)
