@@ -6,13 +6,15 @@ LoadSeason <- function(filename = "EPL 13-14.csv") {
   #
   # Returns:
   #   Data frame with the following columns
-  #     Date.Time: Date and time of when the game began
+  #     Date.Time: Date and time of when the game began. Format is "%m/%d/%y %H:%M".
   #     Home.Team: Home team
   #     Away.Team: Away team
   #     Home.Score: Goals scored by the home team
   #     Away.Score: Goals scored by the away team
   
-  read.csv(filename)
+  games <- read.csv(filename)
+  games$Date.Time <- strptime(games$Date.Time, format = "%m/%d/%y %H:%M", tz = "GMT")
+  games
 }
 
 BuildLeagueTable <- function(games, start.date = "initial", finish.date = "final") {
