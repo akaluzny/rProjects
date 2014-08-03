@@ -1,4 +1,4 @@
-LoadSeason <- function(filename = "EPL 13-14.csv") {
+LoadSeason <- function(filename = "EPL games 13-14.csv") {
   # Loads season from specified file containing a csv with all the games
   #
   # Args:
