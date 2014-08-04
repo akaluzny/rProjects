@@ -112,7 +112,7 @@ BuildLeagueTable <- function(games, start.time = "initial", finish.time = "final
   table[order(table$Points, table$Goal.Difference, table$Scored, decreasing = TRUE), ]
 }
 
-TeamRecordUpToDate <- function(games, team, last.time) {
+TeamRecordUpToTime <- function(games, team, last.time) {
   # Returns a team's record calculated from the games provided, only including games up to provided time
   #
   # Args:
