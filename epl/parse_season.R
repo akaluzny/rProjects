@@ -55,7 +55,7 @@ BuildLeagueTable <- function(games, start.time = "initial", finish.time = "final
   #     Points: Number of total points
 
   # Assume all games take two hours
-  two.hours <- as.difftime(2, units="hours")
+  two.hours <- as.difftime(2, units = "hours")
   if (start.time == "initial") {
     # Initial time should begin with the first game
     start.time <- games$Date.Time[1]
@@ -110,4 +110,46 @@ BuildLeagueTable <- function(games, start.time = "initial", finish.time = "final
   
   # Sort standings by points, goal difference, and then goals
   table[order(table$Points, table$Goal.Difference, table$Scored, decreasing = TRUE), ]
+}
+
+TeamRecordUpToDate <- function(games, team, last.time) {
+  # Returns a team's record calculated from the games provided, only including games up to provided time
+  #
+  # Args:
+  #   games: Data frame of individual games
+  #   team: Team whose record needs to be calculated
+  #   last.date: Only games completed up to this time will be used to compute league table.
+  #
+  # Returns:
+  #   Data frame with one row for the team and the following columns
+  #     Team: Team in position
+  #     Home.Games: Number of home games played
+  #     Home.Wins: Number of home wins
+  #     Home.Draws: Number of home draws
+  #     Home.Losses: Number of home losses
+  #     Home.Scored: Number of home goals scored
+  #     Home.Allowed: Number of home goals allowed
+  #     Home.Goal.Difference: Difference in home goals
+  #     Home.Points: Number of home points
+  #     Away.Games: Number of away games played
+  #     Away.Wins: Number of away wins
+  #     Away.Draws: Number of away draws
+  #     Away.Losses: Number of away losses
+  #     Away.Scored: Number of away goals scored
+  #     Away.Allowed: Number of away goals allowed
+  #     Away.Goal.Difference: Difference in away goals
+  #     Away.Points: Number of away points
+  #     Games: Number of total games played
+  #     Wins: Number of total wins
+  #     Draws: Number of total draws
+  #     Losses: Number of total losses
+  #     Scored: Number of total goals scored
+  #     Allowed: Number of total goals allowed
+  #     Goal.Difference: Difference in total goals
+  #     Points: Number of total points
+  
+  # Build a league table including games that began at least two hours before the provided time
+  table <- BuildLeagueTable(games[games$Date.Time < last.time - as.difftime(2, units = "hours"), ])
+  # Return the requested team from the table
+  table[table$Team == team, ]
 }
